@@ -6,18 +6,21 @@ end
 
 module Poker
   module HandGrouper
-    def self.all
-      @all ||= [
-        StraightFlush,
-        FourOfAKind,
-        FullHouse,
-        Flush,
-        Straight,
-        ThreeOfAKind,
-        TwoPair,
-        OnePair,
-        HighCard
-      ]
+    ALL_BY_SCORE ||= [
+      HighCard,
+      OnePair,
+      TwoPair,
+      ThreeOfAKind,
+      Straight,
+      Flush,
+      FullHouse,
+      FourOfAKind,
+      StraightFlush
+    ]
+    private_constant :ALL_BY_SCORE
+
+    def self.all_with_score
+      ALL_BY_SCORE.map.with_index.to_a.reverse
     end
   end
 end

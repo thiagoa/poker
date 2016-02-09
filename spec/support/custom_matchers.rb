@@ -25,19 +25,6 @@ RSpec::Matchers.define :have_group_order do |*expected|
   end
 end
 
-RSpec::Matchers.define :be_hand do |hand_type|
-  include Poker::Factory
-
-  match do |string_hand|
-    build_hand(string_hand).call.type == hand_type
-  end
-
-  failure_message do |expected_hand|
-    actual_hand = build_hand(expected_hand).call.type
-    "expected #{actual} hand to be of type #{hand_type}, but was #{actual_hand}"
-  end
-end
-
 RSpec::Matchers.define :be_higher_than do |lower_hand|
   include Poker::Factory
 

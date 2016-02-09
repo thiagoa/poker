@@ -9,13 +9,16 @@ module Poker
     end
 
     def call
-      Hand.new(detect_hand.type, @grouped_hand)
+      grouper_class, score = detect_hand
+      Hand.new(grouper_class.type, score, @grouped_hand)
     end
 
     private
 
     def detect_hand
-      HandGrouper.all.find { |grouper_class| group_with(grouper_class).any? }
+      HandGrouper.all_with_score.find do |grouper_class, _|
+        group_with(grouper_class).any?
+      end
     end
 
     def group_with(grouper_class)

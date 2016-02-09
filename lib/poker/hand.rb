@@ -8,10 +8,11 @@ module Poker
 
     NUMBER_OF_CARDS = 5
 
-    attr_reader :type
+    attr_reader :type, :score
 
-    def initialize(type, card_groups)
+    def initialize(type, score = 0, card_groups)
       @type = type
+      @score = score
       @card_groups = card_groups
 
       fail HandError unless ranks.length == NUMBER_OF_CARDS

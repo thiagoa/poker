@@ -3,50 +3,40 @@ require 'poker/hand_builder'
 
 module Poker
   RSpec.describe HandBuilder do
+    include Factory
+
+    HAND_SAMPLES = [
+      [:straight_flush,  ['5C 6C 7C 8C 9C', 'AC TC JC QC KC']],
+      [:four_of_a_kind,  ['AC AH AD AS 8C', 'AC AC AD AS 8C']],
+      [:full_house,      ['KH KC KS TH TC', 'KH KC KH TH TH']],
+      [:flush,           ['QC 8C 6C 4C 3C', '9H 8H 6H 5H 3H']],
+      [:straight,        ['2D 3C 4S 5D 6C', 'AD TH JD QD KD']],
+      [:three_of_a_kind, ['AH AS AD KS QC', 'KH KD KC JS QC']],
+      [:two_pair,        ['AH AS KC KD QS', 'KC KS QC QD 3S']],
+      [:one_pair,        ['AH AS KH QS JD', '2H 2S 3S 4S 5S']],
+      [:high_card,       ['AH KS QD JC 9S', 'AH KC QH JH 9H']]
+    ]
+
     describe '#call' do
-      it 'detects a straight flush' do
-        expect('5C 6C 7C 8C 9C').to be_hand(:straight_flush)
-        expect('AC TC JC QC KC').to be_hand(:straight_flush)
-      end
+      HAND_SAMPLES.each.with_index(1) do |(hand_type, hand_samples), i|
+        context "when the hand is a #{hand_type}" do
+          it 'is detected' do
+            hands = hand_samples.map do |string_hand|
+              build_hand(string_hand).call.type
+            end
 
-      it 'detects a four of a kind' do
-        expect('AC AH AD AS 8C').to be_hand(:four_of_a_kind)
-        expect('AC AC AD AS 8C').to be_hand(:four_of_a_kind)
-      end
+            expect(hands).to all(be hand_type)
+          end
 
-      it 'detects a full house' do
-        expect('KH KC KS TH TC').to be_hand(:full_house)
-        expect('KH KC KH TH TH').to be_hand(:full_house)
-      end
+          HAND_SAMPLES.drop(i).each do |lower_hand_type, lower_hand_samples|
+            it "scores higher than #{lower_hand_type}" do
+              higher_hand = build_hand(hand_samples.first).call
+              lower_hand = build_hand(lower_hand_samples.first).call
 
-      it 'detects a flush' do
-        expect('QC 8C 6C 4C 3C').to be_hand(:flush)
-        expect('9H 8H 6H 5H 3H').to be_hand(:flush)
-      end
-
-      it 'detects a straight' do
-        expect('2D 3C 4S 5D 6C').to be_hand(:straight)
-        expect('AD TH JD QD KD').to be_hand(:straight)
-      end
-
-      it 'detects a three of a kind' do
-        expect('AH AS AD KS QC').to be_hand(:three_of_a_kind)
-        expect('KH KD KC JS QC').to be_hand(:three_of_a_kind)
-      end
-
-      it 'detects a two pair' do
-        expect('AH AS KC KD QS').to be_hand(:two_pair)
-        expect('KC KS QC QD 3S').to be_hand(:two_pair)
-      end
-
-      it 'detects a one pair' do
-        expect('AH AS KH QS JD').to be_hand(:one_pair)
-        expect('2H 2S 3S 4S 5S').to be_hand(:one_pair)
-      end
-
-      it 'detects a high card' do
-        expect('AH KS QD JC 9S').to be_hand(:high_card)
-        expect('AH KC QH JH 9H').to be_hand(:high_card)
+              expect(higher_hand).to be > lower_hand
+            end
+          end
+        end
       end
     end
   end

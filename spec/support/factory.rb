@@ -66,10 +66,11 @@ module Poker
       end
     end
 
-    def hand_double(type, ace_high: nil, ranks: nil)
+    def hand_double(type, score: nil, ace_high: nil, ranks: nil)
       instance_double('Hand').tap do |hand|
         expect(hand).to receive(:type).and_return(type).at_least(:once)
 
+        stub_message(hand, :score, score) if score
         stub_message(hand, :ace_high?, ace_high) unless ace_high.nil?
         stub_message(hand, :ranks, ranks) if ranks
       end
