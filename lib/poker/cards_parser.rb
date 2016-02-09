@@ -26,8 +26,6 @@ module Poker
       'C' => :clubs
     }
 
-    CARD_PATTERN = /^(?<rank>[1-9]|1[0-3]|[ATJQK])(?<suit>[SHDC])$/
-
     def initialize(cards_abbreviations)
       @cards_abbreviations = cards_abbreviations
     end
@@ -39,15 +37,13 @@ module Poker
     private
 
     def create_card(card_abbr)
-      Card.new(*(extract_parts(card_abbr) || []).compact)
-    rescue ArgumentError
+      Card.new(*fetch_parts(*card_abbr.chars))
+    rescue KeyError
       raise CardError, "Could not parse invalid card: #{card_abbr}"
     end
 
-    def extract_parts(card_abbr)
-      card_abbr.match(CARD_PATTERN) do |card|
-        [RANK_MAPPING[card[:rank]], SUIT_MAPPING[card[:suit]]]
-      end
+    def fetch_parts(rank, suit)
+      [RANK_MAPPING.fetch(rank), SUIT_MAPPING.fetch(suit)]
     end
   end
 end
