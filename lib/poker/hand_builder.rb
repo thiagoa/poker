@@ -4,8 +4,9 @@ require 'poker/hand_grouper'
 
 module Poker
   class HandBuilder
-    def initialize(cards)
+    def initialize(cards, hand_groupers)
       @cards_group = CardsGroup.new(cards)
+      @hand_groupers = hand_groupers
     end
 
     def call
@@ -16,7 +17,7 @@ module Poker
     private
 
     def detect_hand
-      HandGrouper.all_with_score.find do |grouper_class, _|
+      @hand_groupers.all_with_score.find do |grouper_class, _|
         group_with(grouper_class).any?
       end
     end

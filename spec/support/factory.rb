@@ -16,8 +16,8 @@ module Poker
       CardsParser.new(cards).call
     end
 
-    def build_hand(cards)
-      HandBuilder.new(build_cards(cards))
+    def build_hand(cards, hand_groupers)
+      HandBuilder.new(build_cards(cards), hand_groupers)
     end
 
     def build_hand_comparator(left_hand, right_hand)

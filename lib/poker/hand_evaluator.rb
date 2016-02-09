@@ -1,5 +1,9 @@
 class HandEvaluator
-  include Poker::Factory
+  include Poker::Factory, Poker::HandGrouper
+
+  def initialize
+    @hand_groupers = Collection.new(traditional_high_poker)
+  end
 
   def return_stronger_hand(raw_left_hand, raw_right_hand)
     left_hand, right_hand = build_hands(raw_left_hand, raw_right_hand)
@@ -14,6 +18,6 @@ class HandEvaluator
   private
 
   def build_hands(*raw_hands)
-    raw_hands.map { |raw_hand| build_hand(raw_hand).call }
+    raw_hands.map { |raw_hand| build_hand(raw_hand, @hand_groupers).call }
   end
 end

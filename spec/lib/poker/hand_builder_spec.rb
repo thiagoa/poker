@@ -1,9 +1,11 @@
 require 'spec_helper'
 require 'poker/hand_builder'
+require 'poker/hand_grouper'
 
 module Poker
   RSpec.describe HandBuilder do
     include Factory
+    extend HandGrouper
 
     HAND_SAMPLES = [
       [:straight_flush,  ['5C 6C 7C 8C 9C', 'AC TC JC QC KC']],
@@ -17,12 +19,14 @@ module Poker
       [:high_card,       ['AH KS QD JC 9S', 'AH KC QH JH 9H']]
     ]
 
+    HAND_GROUPERS = HandGrouper::Collection.new(traditional_high_poker)
+
     describe '#call' do
       HAND_SAMPLES.each.with_index(1) do |(hand_type, hand_samples), i|
         context "when the hand is a #{hand_type}" do
           it 'is detected' do
             hands = hand_samples.map do |string_hand|
-              build_hand(string_hand).call.type
+              build_hand(string_hand, HAND_GROUPERS).call.type
             end
 
             expect(hands).to all(be hand_type)
@@ -30,8 +34,15 @@ module Poker
 
           HAND_SAMPLES.drop(i).each do |lower_hand_type, lower_hand_samples|
             it "scores higher than #{lower_hand_type}" do
-              higher_hand = build_hand(hand_samples.first).call
-              lower_hand = build_hand(lower_hand_samples.first).call
+              higher_hand = build_hand(
+                hand_samples.first,
+                HAND_GROUPERS
+              ).call
+
+              lower_hand = build_hand(
+                lower_hand_samples.first,
+                HAND_GROUPERS
+              ).call
 
               expect(higher_hand).to be > lower_hand
             end
